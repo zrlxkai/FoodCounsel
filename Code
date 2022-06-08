@@ -1,3 +1,12 @@
+#
+# This is a Shiny web application. You can run the application by clicking
+# the 'Run App' button above.
+#
+# Find out more about building applications with Shiny here:
+#
+#    http://shiny.rstudio.com/
+#
+
 #install.packages("ggplot2")
 #install.packages("dplyr")
 
@@ -9,77 +18,93 @@ library(dplyr)
 setwd("C:/Users/End User/Documents/DEGREE/sem 4/data science")
 getwd()
 stageData <- read.csv("Data.csv")
-#stageData[stageData == ""] <- NA
-#stageData_updated <- na.omit(stageData)
+
+#initialize data
 Loss <- stageData$loss_percentage
 Stage <- stageData$food_supply_stage
 Country <- stageData$country
 df <- data.frame(Country, Stage, Loss)
-#Stage[Stage == ""] <- NA
-#dataStage <- na.omit(Stage)
 
 # Define UI for application
 ui <- fluidPage(
     navbarPage( 
-      "Food Counsel",
+      "Food Counsel", #app title
+      
+      #stage tab
       tabPanel( "Stage",
         h2("Stage of Food Waste"),
         br(),
-        p("This tab will show the break down of dataset to identify at which stage does food waste occur the most in a country."),
+        p("This tab will show the break down of dataset to identify at which stage does food waste occur the most."),
         br(),
-        sidebarPanel(
+        
+        sidebarPanel(          
+          h3("Tick for categorized figure"),
           
-          #select country
-          #selectInput("Country", label = h3("Select Country"), choices = c("",as.character(Country)),
-          #            selected = NULL, multiple = FALSE),
+          #checkbox
+          checkboxInput("cbCategorized", "Categorized", FALSE),
           
-          #select stage
-          #selectInput("Stage", label = h3("Select Stage"), choices = c("All",as.character(Stage)),
-          #            selected = "All", multiple = FALSE),
+          h3("Dataset Table"),
+          br(),
           
+          #display table
           fluidRow(column(12, dataTableOutput("table"), align = "center")),
           
-        ), #sidebar panel
+        ), #sidebar panel end
 
-        mainPanel(
-          #fluidRow(column(5, verbatimTextOutput("valueCountry"))),
-          #fluidRow(column(5, verbatimTextOutput("valueStage"))),
+        mainPanel( 
+        
+          h2("Figure of percentage of food waste (%) sorted by stages of food waste for all country"),
+          br(),
+          
+          #display graph
           plotOutput("plot")
-        ) #main panel
+          
+        ) #main panel end
         
       ),#tab 1
       
-      tabPanel("tab 2","empty"), #tab 2
-      tabPanel("tab 3","empty"), #tab 3
+      tabPanel("tab 2", h1("isi dlm ni code korang")), #tab 2 
+      tabPanel("tab 3", h1("isi dlm ni code korang")), #tab 3
       
-    ) #Navbar Page
-) #fluid Page
+    ) #Navbar Page end
+) #fluid Page end
 
-# Define server logic required to draw a histogram
+# Define server 
 server <- function(input, output) {
 
-  #print country
-  output$valueCountry <- renderPrint({ input$Country })
-  #output$valueStage <- renderPrint({ input$Stage })
+  #print table
   output$table <- renderDataTable(df)
+  
+  #print graph
   output$plot <- renderPlot({
-    ggplot(df, aes(x = Country, y = Loss)) +
-      geom_point(aes(colour=Stage), stat = 'identity') +
-      #geom_boxplot(stat = 'identity',aes(ymin = min(df$Loss), lower = quantile(df$Loss, 0.25), 
-      #                                   middle = median(df$Loss), upper = quantile(df$Loss, 0.75), 
-      #                                   ymax = max(df$Loss), colour = Stage, na.rm = FALSE, group = cut_width(Country, 0.25))) +
-      coord_flip() +
+    #if check box ticked
+    if(input$cbCategorized == TRUE){
+      ggplot(df, aes(x = Country, y = (Loss)), height = 2000) +
+        geom_boxplot(aes(colour = Stage))+
+        facet_wrap(~Stage) +
+        ggtitle("Food Waste Stage") +
+        xlab("Country") +
+        ylab("Food Waste Percentage (%)") +
+        scale_fill_gradient("Average", low="darkolivegreen1",high="deepskyblue3") +
+        theme_bw(base_size = 15) +
+        theme(axis.text.x = element_blank())
+      
+    } #if end
+    #check box didnt ticked
+    else{
+    ggplot(df, aes(x = Country, y = (Loss)), height = 2000) +
+    geom_boxplot(aes(colour = Stage))+
       ggtitle("Food Waste Stage") +
       xlab("Country") +
       ylab("Food Waste Percentage (%)") +
       scale_fill_gradient("Average", low="darkolivegreen1",high="deepskyblue3") +
-      theme_bw(base_size = 15)
-  })
+      theme_bw(base_size = 15) +
+      theme(axis.text.x = element_blank())
+    } #else end
+      
+  }) #outputplot end
     
-  #                    boxplot( Loss ~ get(input$Stage), data = stageData, xlab = "Number of Cylinders",
-  #                                   ylab = "Miles Per Gallon", main = "Mileage Data")})
-}
+} #server end
 
 # Run the application 
 shinyApp(ui = ui, server = server)
-
