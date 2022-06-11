@@ -13,6 +13,7 @@
 library(shiny)
 library(ggplot2)
 library(dplyr)
+library(plotly)
 
 #import data
 setwd("C:/Users/User/OneDrive/Documents/FoodCounsel")
@@ -24,6 +25,8 @@ Loss <- stageData$loss_percentage
 Stage <- stageData$food_supply_stage
 Country <- stageData$country
 df <- data.frame(Country, Stage, Loss)
+cyl_data <- select(stageData, year, country, loss_percentage, commodity, food_supply_stage, activity)
+cyl_data[is.na(cyl_data)] <- "General"
 
 # Define UI for application
 ui <- fluidPage(
@@ -103,7 +106,40 @@ ui <- fluidPage(
               
     ),#tab 1
     
-    tabPanel("tab 2", h1("isi dlm ni code korang")), #tab 2 
+    tabPanel( "Loss Percentage",
+              h2("Total Food Loss Percentage Over the Years"),
+              br(),
+              p("This tab will show the total food loss percentage globally that occurs in various 
+                activities that may arise in the food supply chain stage over a range of years."),
+              br(),
+              
+              sidebarPanel(
+                
+                #Input year for loss percentage
+                sliderInput("input_year", 
+                            label = h5("Year:"),
+                            min = 2000, max = 2020,
+                            value = c(2010,2015)),
+                
+                #Display table for loss percentage
+                #fluidRow(column(12, dataTableOutput("CYLtable"), align = "center")),
+                
+              ), #sidebar panel
+              
+              mainPanel(
+                
+                #Display scatterplot for loss percentage
+                plotlyOutput("scatterplot")
+              ), #main panel
+              
+              column(
+                8, offset=2, br(),br(),br(), 
+                h3("Dataset Table"),
+                dataTableOutput("CYLtable"), align = "center"
+              ) #column
+              
+              
+    ), #tab 2 
     tabPanel("tab 3", h1("isi dlm ni code korang")), #tab 3
     
   ) #Navbar Page end
@@ -143,6 +179,32 @@ server <- function(input, output) {
     } #else end
     
   }) #outputplot end
+  
+  #Table for loss percentage
+  output$CYLtable <- renderDataTable({
+    #filter_cyl <- filter(cyl_data, year==input$input_year)
+    filter_cyl <- filter(cyl_data, year>=input$input_year[1] & year<=input$input_year[2])
+  }) # end table loss percentage
+  
+  #Scatterplot for loss percentage
+  output$scatterplot <- renderPlotly({
+    data <- cyl_data
+    
+    scatterPlot <- data %>%
+      ggplot(gapminder, mapping = aes(x = year,
+                                      y = loss_percentage,
+                                      color = country,
+                                      text = paste("commodity:", commodity, "<br>",
+                                                   "stage:", food_supply_stage ))) +
+      geom_point(alpha = (1/3)) +
+      coord_cartesian(xlim = c(input$input_year[1],input$input_year[2]),
+                      ylim = c(min(data$loss_percentage),max(data$loss_percentage))) + 
+      theme(legend.position="none") +
+      scale_x_continuous(breaks = seq(input$input_year[1],input$input_year[2], by = 1)) +
+      labs(title <- "Food Loss Percentage Over the Years")
+    
+    scatterPlot <- ggplotly(scatterPlot)
+  }) #end scatterplot loss percentage
   
 } #server end
 
