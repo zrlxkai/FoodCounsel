@@ -15,7 +15,7 @@ library(ggplot2)
 library(dplyr)
 
 #import data
-setwd("C:/Users/End User/Documents/DEGREE/sem 4/data science")
+setwd("C:/Users/User/OneDrive/Documents/FoodCounsel")
 getwd()
 stageData <- read.csv("Data.csv")
 
@@ -27,51 +27,91 @@ df <- data.frame(Country, Stage, Loss)
 
 # Define UI for application
 ui <- fluidPage(
-    navbarPage( 
-      "Food Counsel", #app title
-      
-      #stage tab
-      tabPanel( "Stage",
-        h2("Stage of Food Waste"),
-        br(),
-        p("This tab will show the break down of dataset to identify at which stage does food waste occur the most."),
-        br(),
-        
-        sidebarPanel(          
-          h3("Tick for categorized figure"),
-          
-          #checkbox
-          checkboxInput("cbCategorized", "Categorized", FALSE),
-          
-          h3("Dataset Table"),
-          br(),
-          
-          #display table
-          fluidRow(column(12, dataTableOutput("table"), align = "center")),
-          
-        ), #sidebar panel end
-
-        mainPanel( 
-        
-          h2("Figure of percentage of food waste (%) sorted by stages of food waste for all country"),
-          br(),
-          
-          #display graph
-          plotOutput("plot")
-          
-        ) #main panel end
-        
-      ),#tab 1
-      
-      tabPanel("tab 2", h1("isi dlm ni code korang")), #tab 2 
-      tabPanel("tab 3", h1("isi dlm ni code korang")), #tab 3
-      
-    ) #Navbar Page end
+  navbarPage( 
+    "Food Counsel", #app title
+    
+    tabPanel("Home", 
+             sidebarPanel(
+               h2("FOOD COUNSEL"),
+               p("Food Counsel is an application that can provide its users with food waste-related information and data"),
+               br(),
+               br(),
+             ),
+             mainPanel(
+               h1("Hello fellow Malaysian"),
+               p("The fact that substantial amounts of food are produced but not eaten by humans has substantial negative impacts: 
+                 environmentally, socially and economically. Estimates suggest that 8-10% of global greenhouse gas emissions are 
+                 associated with food that is not consumed."),
+               br(),
+               br(),
+               strong(h3("How do we come to Food Waste Data Visualization Project?")),
+               strong(h4("Problem statement")),
+               p("The food wastage in the world has been found to be on the rise. Because there hasn't been much research done to analyze this issue."),
+               br(),
+               br(),
+               strong(h4("Solution")),
+               p("Food Wastage is a complex issue and has been a serious problem in Malaysia. As a result, we created this project that has informations on statistic of food wastage and we did it to spread awareness of it"),
+               br(),
+               strong(h3("The Questions?")),
+               p("- How much food has been wasted in household, food service and retail category?"),
+               p("- What is the trends of change of food waste from 2000 to 2021?"),
+               p("- What are the stages of food wastage to happen?"),
+               p("- At which stage is the food waste occur the most?"),
+               br(),
+               strong(h3("Objective")),
+               p("- To identify patterns of food waste' trends from 2000 to 2021 in the world"),
+               p("- To show the graph illustration of food waste by stages"),
+               p("- To display the estimation of food waste according to household, food service and retail category"),
+               br(),
+               strong(h3("Datasets Used")),
+               p("We use datasets from the official website of UN Environment Programme and from the website of Food and Agriculture Organization of the United States"),
+               verbatimTextOutput("txtout"),
+             ) # mainPanel
+             
+    ),
+    
+    #stage tab
+    tabPanel( "Stage",
+              h2("Stage of Food Waste"),
+              br(),
+              p("This tab will show the break down of dataset to identify at which stage does food waste occur the most."),
+              br(),
+              
+              sidebarPanel(          
+                h3("Tick for categorized figure"),
+                
+                #checkbox
+                checkboxInput("cbCategorized", "Categorized", FALSE),
+                
+                h3("Dataset Table"),
+                br(),
+                
+                #display table
+                fluidRow(column(12, dataTableOutput("table"), align = "center")),
+                
+              ), #sidebar panel end
+              
+              mainPanel( 
+                
+                h2("Figure of percentage of food waste (%) sorted by stages of food waste for all country"),
+                br(),
+                
+                #display graph
+                plotOutput("plot")
+                
+              ) #main panel end
+              
+    ),#tab 1
+    
+    tabPanel("tab 2", h1("isi dlm ni code korang")), #tab 2 
+    tabPanel("tab 3", h1("isi dlm ni code korang")), #tab 3
+    
+  ) #Navbar Page end
 ) #fluid Page end
 
 # Define server 
 server <- function(input, output) {
-
+  
   #print table
   output$table <- renderDataTable(df)
   
@@ -92,18 +132,18 @@ server <- function(input, output) {
     } #if end
     #check box didnt ticked
     else{
-    ggplot(df, aes(x = Country, y = (Loss)), height = 2000) +
-    geom_boxplot(aes(colour = Stage))+
-      ggtitle("Food Waste Stage") +
-      xlab("Country") +
-      ylab("Food Waste Percentage (%)") +
-      scale_fill_gradient("Average", low="darkolivegreen1",high="deepskyblue3") +
-      theme_bw(base_size = 15) +
-      theme(axis.text.x = element_blank())
+      ggplot(df, aes(x = Country, y = (Loss)), height = 2000) +
+        geom_boxplot(aes(colour = Stage))+
+        ggtitle("Food Waste Stage") +
+        xlab("Country") +
+        ylab("Food Waste Percentage (%)") +
+        scale_fill_gradient("Average", low="darkolivegreen1",high="deepskyblue3") +
+        theme_bw(base_size = 15) +
+        theme(axis.text.x = element_blank())
     } #else end
-      
-  }) #outputplot end
     
+  }) #outputplot end
+  
 } #server end
 
 # Run the application 
