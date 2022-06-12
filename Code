@@ -9,24 +9,93 @@
 
 #install.packages("ggplot2")
 #install.packages("dplyr")
+#install.packages("devtools") #install this to use library(bubbles)
+#devtools::install_github("jcheng5/bubbles") #install this to use library(bubbles)
+#install.packages("plotly")
 
 library(shiny)
 library(ggplot2)
+library(plyr)
 library(dplyr)
 library(plotly)
+library(rsconnect)
+library(shinydashboardPlus)
+library(tidyr)
+library(tidyverse) #for bubble graph
+library(shinydashboard) #for bubble graph
+library(bubbles) #for bubble graph
 
 #import data
 setwd("C:/Users/User/OneDrive/Documents/FoodCounsel")
 getwd()
 stageData <- read.csv("Data.csv")
+HouseholdData <- read.csv("Household.csv")
+FSData <- read.csv("Food Service.csv")
+RetailData <- read.csv("Retail.csv")
 
 #initialize data
 Loss <- stageData$loss_percentage
 Stage <- stageData$food_supply_stage
 Country <- stageData$country
 df <- data.frame(Country, Stage, Loss)
+
 cyl_data <- select(stageData, year, country, loss_percentage, commodity, food_supply_stage, activity)
 cyl_data[is.na(cyl_data)] <- "General"
+
+ANZHousehold <- select(filter(HouseholdData,Region == "Australia and New Zealand"),Country,Estimate)
+CASHousehold <- select(filter(HouseholdData,Region == "Central Asia"),Country,Estimate)
+EASHousehold <- select(filter(HouseholdData,Region == "Eastern Asia"),Country,Estimate)
+EEUHousehold <- select(filter(HouseholdData,Region == "Eastern Europe"),Country,Estimate)
+LACHousehold <- select(filter(HouseholdData,Region == "Latin America and the Caribbean"),Country,Estimate)
+MELHousehold <- select(filter(HouseholdData,Region == "Melanesia"),Country,Estimate)
+MICHousehold <- select(filter(HouseholdData,Region == "Micronesia"),Country,Estimate)
+NAFHousehold <- select(filter(HouseholdData,Region == "Northern Africa"),Country,Estimate)
+NAMHousehold <- select(filter(HouseholdData,Region == "Northern America"),Country,Estimate)
+NEUHousehold <- select(filter(HouseholdData,Region == "Northern Europe"),Country,Estimate)
+POLHousehold <- select(filter(HouseholdData,Region == "Polynesia"),Country,Estimate)
+SEAHousehold <- select(filter(HouseholdData,Region == "South-eastern Asia"),Country,Estimate)
+SASHousehold <- select(filter(HouseholdData,Region == "Southern Asia"),Country,Estimate)
+SEUHousehold <- select(filter(HouseholdData,Region == "Southern Europe"),Country,Estimate)
+SSAHousehold <- select(filter(HouseholdData,Region == "Sub-Saharan Africa"),Country,Estimate)
+WASHousehold <- select(filter(HouseholdData,Region == "Western Asia"),Country,Estimate)
+WEUHousehold <- select(filter(HouseholdData,Region == "Western Europe"),Country,Estimate)
+
+ANZfs <- select(filter(FSData,Region == "Australia and New Zealand"),Country,Estimate)
+CASfs <- select(filter(FSData,Region == "Central Asia"),Country,Estimate)
+EASfs <- select(filter(FSData,Region == "Eastern Asia"),Country,Estimate)
+EEUfs <- select(filter(FSData,Region == "Eastern Europe"),Country,Estimate)
+LACfs <- select(filter(FSData,Region == "Latin America and the Caribbean"),Country,Estimate)
+MELfs <- select(filter(FSData,Region == "Melanesia"),Country,Estimate)
+MICfs <- select(filter(FSData,Region == "Micronesia"),Country,Estimate)
+NAFfs <- select(filter(FSData,Region == "Northern Africa"),Country,Estimate)
+NAMfs <- select(filter(FSData,Region == "Northern America"),Country,Estimate)
+NEUfs <- select(filter(FSData,Region == "Northern Europe"),Country,Estimate)
+POLfs <- select(filter(FSData,Region == "Polynesia"),Country,Estimate)
+SEAfs <- select(filter(FSData,Region == "South-eastern Asia"),Country,Estimate)
+SASfs <- select(filter(FSData,Region == "Southern Asia"),Country,Estimate)
+SEUfs <- select(filter(FSData,Region == "Southern Europe"),Country,Estimate)
+SSAfs <- select(filter(FSData,Region == "Sub-Saharan Africa"),Country,Estimate)
+WASfs <- select(filter(FSData,Region == "Western Asia"),Country,Estimate)
+WEUfs <- select(filter(FSData,Region == "Western Europe"),Country,Estimate)
+
+ANZRetail <- select(filter(RetailData,Region == "Australia and New Zealand"),Country,Estimate)
+CASRetail <- select(filter(RetailData,Region == "Central Asia"),Country,Estimate)
+EASRetail <- select(filter(RetailData,Region == "Eastern Asia"),Country,Estimate)
+EEURetail <- select(filter(RetailData,Region == "Eastern Europe"),Country,Estimate)
+LACRetail <- select(filter(RetailData,Region == "Latin America and the Caribbean"),Country,Estimate)
+MELRetail <- select(filter(RetailData,Region == "Melanesia"),Country,Estimate)
+MICRetail <- select(filter(RetailData,Region == "Micronesia"),Country,Estimate)
+NAFRetail <- select(filter(RetailData,Region == "Northern Africa"),Country,Estimate)
+NAMRetail <- select(filter(RetailData,Region == "Northern America"),Country,Estimate)
+NEURetail <- select(filter(RetailData,Region == "Northern Europe"),Country,Estimate)
+POLRetail <- select(filter(RetailData,Region == "Polynesia"),Country,Estimate)
+SEARetail <- select(filter(RetailData,Region == "South-eastern Asia"),Country,Estimate)
+SASRetail <- select(filter(RetailData,Region == "Southern Asia"),Country,Estimate)
+SEURetail <- select(filter(RetailData,Region == "Southern Europe"),Country,Estimate)
+SSARetail <- select(filter(RetailData,Region == "Sub-Saharan Africa"),Country,Estimate)
+WASRetail <- select(filter(RetailData,Region == "Western Asia"),Country,Estimate)
+WEURetail <- select(filter(RetailData,Region == "Western Europe"),Country,Estimate)
+
 
 # Define UI for application
 ui <- fluidPage(
@@ -105,7 +174,6 @@ ui <- fluidPage(
               ) #main panel end
               
     ),#tab 1
-    
     tabPanel( "Loss Percentage",
               h2("Total Food Loss Percentage Over the Years"),
               br(),
@@ -139,6 +207,49 @@ ui <- fluidPage(
               ) #column
               
               
+    ), 
+    
+    
+    tabPanel("By Region",
+             h2("Statistics of Estimated Food Waste (tones/year) by Region and Industry"),
+             fluidRow(
+               #choose the type of dataset
+               selectInput(inputId = "channel1", label = "Choose Region",
+                           choices = c("Australia and New Zealand"="ANZ",
+                                       "Central Asia"="CAS",
+                                       "Eastern Asia"="EAS",
+                                       "Eastern Europe"="EEU",
+                                       "Latin America and the Caribbean"="LAC",
+                                       "Melanesia"="MEL",
+                                       "Micronesia"="MIC",
+                                       "Northern Africa"="NAF",
+                                       "Northern America"="NAM",
+                                       "Northern Europe"="NEU",
+                                       "Polynesia"="POL",
+                                       "South-eastern Asia"="SEA",
+                                       "Southern Asia"="SAS",
+                                       "Southern Europe"="SEU",
+                                       "Sub-Saharan Africa"="SSA",
+                                       "Western Asia"="WAS",
+                                       "Western Europe"="WEU")),
+               h6(),
+               radioButtons("ind",
+                           "Choose the Industry:",
+                           c("Household"="household",
+                             "Food Service"="foodservice",
+                             "Retail"="retail"))
+               
+             ),
+             fluidRow(
+               sidebarPanel(
+                 tableOutput("datasetss")
+               ),
+               box(
+                 width = 8, status = "info", solidHeader = TRUE,
+                 title = "Food Waste by Countries and Industries",
+                 bubblesOutput("bubbleRegion", width = "100%", height = 600)
+               )
+             )
     ), #tab 2 
     tabPanel("tab 3", h1("isi dlm ni code korang")), #tab 3
     
@@ -148,6 +259,7 @@ ui <- fluidPage(
 # Define server 
 server <- function(input, output) {
   
+  #server for stage tab
   #print table
   output$table <- renderDataTable(df)
   
@@ -180,6 +292,7 @@ server <- function(input, output) {
     
   }) #outputplot end
   
+  #server for loss percentage tab
   #Table for loss percentage
   output$CYLtable <- renderDataTable({
     #filter_cyl <- filter(cyl_data, year==input$input_year)
@@ -205,6 +318,489 @@ server <- function(input, output) {
     
     scatterPlot <- ggplotly(scatterPlot)
   }) #end scatterplot loss percentage
+  
+  
+  #server for region tab
+  output$bubbleRegion <- renderBubbles({
+    if(input$channel1 == "ANZ"){
+      if(input$ind == "household"){
+        bubbles(value = ANZHousehold$Estimate,
+                label = ANZHousehold$Country,
+                color = rainbow(nrow(ANZHousehold), alpha=NULL)[sample(nrow(ANZHousehold))])
+      }
+      else if(input$ind == "foodservice"){
+        bubbles(value = ANZfs$Estimate,
+                label = ANZfs$Country,
+                color = rainbow(nrow(ANZfs), alpha=NULL)[sample(nrow(ANZfs))])
+      }
+      else if(input$ind == "retail"){
+        bubbles(value = ANZRetail$Estimate,
+                label = ANZRetail$Country,
+                color = rainbow(nrow(ANZRetail), alpha=NULL)[sample(nrow(ANZRetail))])
+      }
+    }
+    else if(input$channel1 == "CAS"){
+      if(input$ind == "household"){
+        bubbles(value = CASHousehold$Estimate,
+                label = CASHousehold$Country,
+                color = rainbow(nrow(CASHousehold), alpha=NULL)[sample(nrow(CASHousehold))])
+      }
+      else if(input$ind == "foodservice"){
+        bubbles(value = CASfs$Estimate,
+                label = CASfs$Country,
+                color = rainbow(nrow(CASfs), alpha=NULL)[sample(nrow(CASfs))])
+      }
+      else if(input$ind == "retail"){
+        bubbles(value = CASRetail$Estimate,
+                label = CASRetail$Country,
+                color = rainbow(nrow(CASRetail), alpha=NULL)[sample(nrow(CASRetail))])
+      }
+    }
+    else if(input$channel1 == "EAS"){
+      if(input$ind == "household"){
+        bubbles(value = EASHousehold$Estimate,
+                label = EASHousehold$Country,
+                color = rainbow(nrow(EASHousehold), alpha=NULL)[sample(nrow(EASHousehold))])
+      }
+      else if(input$ind == "foodservice"){
+        bubbles(value = EASfs$Estimate,
+                label = EASfs$Country,
+                color = rainbow(nrow(EASfs), alpha=NULL)[sample(nrow(EASfs))])
+      }
+      else if(input$ind == "retail"){
+        bubbles(value = EASRetail$Estimate,
+                label = EASRetail$Country,
+                color = rainbow(nrow(EASRetail), alpha=NULL)[sample(nrow(EASRetail))])
+      }
+    }
+    else if(input$channel1 == "EEU"){
+      if(input$ind == "household"){
+        bubbles(value = EEUHousehold$Estimate,
+                label = EEUHousehold$Country,
+                color = rainbow(nrow(EEUHousehold), alpha=NULL)[sample(nrow(EEUHousehold))])
+      }
+      else if(input$ind == "foodservice"){
+        bubbles(value = EEUfs$Estimate,
+                label = EEUfs$Country,
+                color = rainbow(nrow(EEUfs), alpha=NULL)[sample(nrow(EEUfs))])
+      }
+      else if(input$ind == "retail"){
+        bubbles(value = EEURetail$Estimate,
+                label = EEURetail$Country,
+                color = rainbow(nrow(EEURetail), alpha=NULL)[sample(nrow(EEURetail))])
+      }
+    }
+    else if(input$channel1 == "LAC"){
+      if(input$ind == "household"){
+        bubbles(value = LACHousehold$Estimate,
+                label = LACHousehold$Country,
+                color = rainbow(nrow(LACHousehold), alpha=NULL)[sample(nrow(LACHousehold))])
+      }
+      else if(input$ind == "foodservice"){
+        bubbles(value = LACfs$Estimate,
+                label = LACfs$Country,
+                color = rainbow(nrow(LACfs), alpha=NULL)[sample(nrow(LACfs))])
+      }
+      else if(input$ind == "retail"){
+        bubbles(value = LACRetail$Estimate,
+                label = LACRetail$Country,
+                color = rainbow(nrow(LACRetail), alpha=NULL)[sample(nrow(LACRetail))])
+      }
+    }
+    else if(input$channel1 == "MEL"){
+      if(input$ind == "household"){
+        bubbles(value = MELHousehold$Estimate,
+                label = MELHousehold$Country,
+                color = rainbow(nrow(MELHousehold), alpha=NULL)[sample(nrow(MELHousehold))])
+      }
+      else if(input$ind == "foodservice"){
+        bubbles(value = MELfs$Estimate,
+                label = MELfs$Country,
+                color = rainbow(nrow(MELfs), alpha=NULL)[sample(nrow(MELfs))])
+      }
+      else if(input$ind == "retail"){
+        bubbles(value = MELRetail$Estimate,
+                label = MELRetail$Country,
+                color = rainbow(nrow(MELRetail), alpha=NULL)[sample(nrow(MELRetail))])
+      }
+    }
+    else if(input$channel1 == "MIC"){
+      if(input$ind == "household"){
+        bubbles(value = MICHousehold$Estimate,
+                label = MICHousehold$Country,
+                color = rainbow(nrow(MICHousehold), alpha=NULL)[sample(nrow(MICHousehold))])
+      }
+      else if(input$ind == "foodservice"){
+        bubbles(value = MICfs$Estimate,
+                label = MICfs$Country,
+                color = rainbow(nrow(MICfs), alpha=NULL)[sample(nrow(MICfs))])
+      }
+      else if(input$ind == "retail"){
+        bubbles(value = MICRetail$Estimate,
+                label = MICRetail$Country,
+                color = rainbow(nrow(MICRetail), alpha=NULL)[sample(nrow(MICRetail))])
+      }
+    }
+    else if(input$channel1 == "NAF"){
+      if(input$ind == "household"){
+        bubbles(value = NAFHousehold$Estimate,
+                label = NAFHousehold$Country,
+                color = rainbow(nrow(NAFHousehold), alpha=NULL)[sample(nrow(NAFHousehold))])
+      }
+      else if(input$ind == "foodservice"){
+        bubbles(value = NAFfs$Estimate,
+                label = NAFfs$Country,
+                color = rainbow(nrow(NAFfs), alpha=NULL)[sample(nrow(NAFfs))])
+      }
+      else if(input$ind == "retail"){
+        bubbles(value = NAFRetail$Estimate,
+                label = NAFRetail$Country,
+                color = rainbow(nrow(NAFRetail), alpha=NULL)[sample(nrow(NAFRetail))])
+      }
+    }
+    else if(input$channel1 == "NAM"){
+      if(input$ind == "household"){
+        bubbles(value = NAMHousehold$Estimate,
+                label = NAMHousehold$Country,
+                color = rainbow(nrow(NAMHousehold), alpha=NULL)[sample(nrow(NAMHousehold))])
+      }
+      else if(input$ind == "foodservice"){
+        bubbles(value = NAMfs$Estimate,
+                label = NAMfs$Country,
+                color = rainbow(nrow(NAMfs), alpha=NULL)[sample(nrow(NAMfs))])
+      }
+      else if(input$ind == "retail"){
+        bubbles(value = NAMRetail$Estimate,
+                label = NAMRetail$Country,
+                color = rainbow(nrow(NAMRetail), alpha=NULL)[sample(nrow(NAMRetail))])
+      }
+    }
+    else if(input$channel1 == "NEU"){
+      if(input$ind == "household"){
+        bubbles(value = NEUHousehold$Estimate,
+                label = NEUHousehold$Country,
+                color = rainbow(nrow(NEUHousehold), alpha=NULL)[sample(nrow(NEUHousehold))])
+      }
+      else if(input$ind == "foodservice"){
+        bubbles(value = NEUfs$Estimate,
+                label = NEUfs$Country,
+                color = rainbow(nrow(NEUfs), alpha=NULL)[sample(nrow(NEUfs))])
+      }
+      else if(input$ind == "retail"){
+        bubbles(value = NEURetail$Estimate,
+                label = NEURetail$Country,
+                color = rainbow(nrow(NEURetail), alpha=NULL)[sample(nrow(NEURetail))])
+      }
+    }
+    else if(input$channel1 == "POL"){
+      if(input$ind == "household"){
+        bubbles(value = POLHousehold$Estimate,
+                label = POLHousehold$Country,
+                color = rainbow(nrow(POLHousehold), alpha=NULL)[sample(nrow(POLHousehold))])
+      }
+      else if(input$ind == "foodservice"){
+        bubbles(value = POLfs$Estimate,
+                label = POLfs$Country,
+                color = rainbow(nrow(POLfs), alpha=NULL)[sample(nrow(POLfs))])
+      }
+      else if(input$ind == "retail"){
+        bubbles(value = POLRetail$Estimate,
+                label = POLRetail$Country,
+                color = rainbow(nrow(POLRetail), alpha=NULL)[sample(nrow(POLRetail))])
+      }
+    }
+    else if(input$channel1 == "SEA"){
+      if(input$ind == "household"){
+        bubbles(value = SEAHousehold$Estimate,
+                label = SEAHousehold$Country,
+                color = rainbow(nrow(SEAHousehold), alpha=NULL)[sample(nrow(SEAHousehold))])
+      }
+      else if(input$ind == "foodservice"){
+        bubbles(value = SEAfs$Estimate,
+                label = SEAfs$Country,
+                color = rainbow(nrow(SEAfs), alpha=NULL)[sample(nrow(SEAfs))])
+      }
+      else if(input$ind == "retail"){
+        bubbles(value = SEARetail$Estimate,
+                label = SEARetail$Country,
+                color = rainbow(nrow(SEARetail), alpha=NULL)[sample(nrow(SEARetail))])
+      }
+    }
+    else if(input$channel1 == "SAS"){
+      if(input$ind == "household"){
+        bubbles(value = SASHousehold$Estimate,
+                label = SASHousehold$Country,
+                color = rainbow(nrow(SASHousehold), alpha=NULL)[sample(nrow(SASHousehold))])
+      }
+      else if(input$ind == "foodservice"){
+        bubbles(value = SASfs$Estimate,
+                label = SASfs$Country,
+                color = rainbow(nrow(SASfs), alpha=NULL)[sample(nrow(SASfs))])
+      }
+      else if(input$ind == "retail"){
+        bubbles(value = SASRetail$Estimate,
+                label = SASRetail$Country,
+                color = rainbow(nrow(SASRetail), alpha=NULL)[sample(nrow(SASRetail))])
+      }
+    }
+    else if(input$channel1 == "SEU"){
+      if(input$ind == "household"){
+        bubbles(value = SEUHousehold$Estimate,
+                label = SEUHousehold$Country,
+                color = rainbow(nrow(SEUHousehold), alpha=NULL)[sample(nrow(SEUHousehold))])
+      }
+      else if(input$ind == "foodservice"){
+        bubbles(value = SEUfs$Estimate,
+                label = SEUfs$Country,
+                color = rainbow(nrow(SEUfs), alpha=NULL)[sample(nrow(SEUfs))])
+      }
+      else if(input$ind == "retail"){
+        bubbles(value = SEURetail$Estimate,
+                label = SEURetail$Country,
+                color = rainbow(nrow(SEURetail), alpha=NULL)[sample(nrow(SEURetail))])
+      }
+    }
+    else if(input$channel1 == "SSA"){
+      if(input$ind == "household"){
+        bubbles(value = SSAHousehold$Estimate,
+                label = SSAHousehold$Country,
+                color = rainbow(nrow(SSAHousehold), alpha=NULL)[sample(nrow(SSAHousehold))])
+      }
+      else if(input$ind == "foodservice"){
+        bubbles(value = SSAfs$Estimate,
+                label = SSAfs$Country,
+                color = rainbow(nrow(SSAfs), alpha=NULL)[sample(nrow(SSAfs))])
+      }
+      else if(input$ind == "retail"){
+        bubbles(value = SSARetail$Estimate,
+                label = SSARetail$Country,
+                color = rainbow(nrow(SSARetail), alpha=NULL)[sample(nrow(SSARetail))])
+      }
+    }
+    else if(input$channel1 == "WAS"){
+      if(input$ind == "household"){
+        bubbles(value = WASHousehold$Estimate,
+                label = WASHousehold$Country,
+                color = rainbow(nrow(WASHousehold), alpha=NULL)[sample(nrow(WASHousehold))])
+      }
+      else if(input$ind == "foodservice"){
+        bubbles(value = WASfs$Estimate,
+                label = WASfs$Country,
+                color = rainbow(nrow(WASfs), alpha=NULL)[sample(nrow(WASfs))])
+      }
+      else if(input$ind == "retail"){
+        bubbles(value = WASRetail$Estimate,
+                label = WASRetail$Country,
+                color = rainbow(nrow(WASRetail), alpha=NULL)[sample(nrow(WASRetail))])
+      }
+    }
+    else if(input$channel1 == "WEU"){
+      if(input$ind == "household"){
+        bubbles(value = WEUHousehold$Estimate,
+                label = WEUHousehold$Country,
+                color = rainbow(nrow(WEUHousehold), alpha=NULL)[sample(nrow(WEUHousehold))])
+      }
+      else if(input$ind == "foodservice"){
+        bubbles(value = WEUfs$Estimate,
+                label = WEUfs$Country,
+                color = rainbow(nrow(WEUfs), alpha=NULL)[sample(nrow(WEUfs))])
+      }
+      else if(input$ind == "retail"){
+        bubbles(value = WEURetail$Estimate,
+                label = WEURetail$Country,
+                color = rainbow(nrow(WEURetail), alpha=NULL)[sample(nrow(WEURetail))])
+      }
+    }
+  })
+  output$datasetss <- renderTable({
+    if(input$channel1 == "ANZ"){
+      if(input$ind == "household"){
+        ANZHousehold
+      }
+      else if(input$ind == "foodservice"){
+        ANZfs
+      }
+      else if(input$ind == "retail"){
+        ANZRetail
+      }
+    }
+    else if(input$channel1 == "CAS"){
+      if(input$ind == "household"){
+        CASHousehold
+      }
+      else if(input$ind == "foodservice"){
+        CASfs
+      }
+      else if(input$ind == "retail"){
+        CASRetail
+      }
+    }
+    else if(input$channel1 == "EAS"){
+      if(input$ind == "household"){
+        EASHousehold
+      }
+      else if(input$ind == "foodservice"){
+        EASfs
+      }
+      else if(input$ind == "retail"){
+        EASRetail
+      }
+    }
+    else if(input$channel1 == "EEU"){
+      if(input$ind == "household"){
+        EEUHousehold
+      }
+      else if(input$ind == "foodservice"){
+        EEUfs
+      }
+      else if(input$ind == "retail"){
+        EEURetail
+      }
+    }
+    else if(input$channel1 == "LAC"){
+      if(input$ind == "household"){
+        LACHousehold
+      }
+      else if(input$ind == "foodservice"){
+        LACfs
+      }
+      else if(input$ind == "retail"){
+        LACRetail
+      }
+    }
+    else if(input$channel1 == "MEL"){
+      if(input$ind == "household"){
+        MELHousehold
+      }
+      else if(input$ind == "foodservice"){
+        MELfs
+      }
+      else if(input$ind == "retail"){
+        MELRetail
+      }
+    }
+    else if(input$channel1 == "MIC"){
+      if(input$ind == "household"){
+        MICHousehold
+      }
+      else if(input$ind == "foodservice"){
+        MICfs
+      }
+      else if(input$ind == "retail"){
+        MICRetail
+      }
+    }
+    else if(input$channel1 == "NAF"){
+      if(input$ind == "household"){
+        NAFHousehold
+      }
+      else if(input$ind == "foodservice"){
+        NAFfs
+      }
+      else if(input$ind == "retail"){
+        NAFRetail
+      }
+    }
+    else if(input$channel1 == "NAM"){
+      if(input$ind == "household"){
+        NAMHousehold
+      }
+      else if(input$ind == "foodservice"){
+        NAMfs
+      }
+      else if(input$ind == "retail"){
+        NAMRetail
+      }
+    }
+    else if(input$channel1 == "NEU"){
+      if(input$ind == "household"){
+        NEUHousehold
+      }
+      else if(input$ind == "foodservice"){
+        NEUfs
+      }
+      else if(input$ind == "retail"){
+        NEURetail
+      }
+    }
+    else if(input$channel1 == "POL"){
+      if(input$ind == "household"){
+        POLHousehold
+      }
+      else if(input$ind == "foodservice"){
+        POLfs
+      }
+      else if(input$ind == "retail"){
+        POLRetail
+      }
+    }
+    else if(input$channel1 == "SEA"){
+      if(input$ind == "household"){
+        SEAHousehold
+      }
+      else if(input$ind == "foodservice"){
+        SEAfs
+      }
+      else if(input$ind == "retail"){
+        SEARetail
+      }
+    }
+    else if(input$channel1 == "SAS"){
+      if(input$ind == "household"){
+        SASHousehold
+      }
+      else if(input$ind == "foodservice"){
+        SASfs
+      }
+      else if(input$ind == "retail"){
+        SASRetail
+      }
+    }
+    else if(input$channel1 == "SEU"){
+      if(input$ind == "household"){
+        SEUHousehold
+      }
+      else if(input$ind == "foodservice"){
+        SEUfs
+      }
+      else if(input$ind == "retail"){
+        SEURetail
+      }
+    }
+    else if(input$channel1 == "SSA"){
+      if(input$ind == "household"){
+        SSAHousehold
+      }
+      else if(input$ind == "foodservice"){
+        SSAfs
+      }
+      else if(input$ind == "retail"){
+        SSARetail
+      }
+    }
+    else if(input$channel1 == "WAS"){
+      if(input$ind == "household"){
+        WASHousehold
+      }
+      else if(input$ind == "foodservice"){
+        WASfs
+      }
+      else if(input$ind == "retail"){
+        WASRetail
+      }
+    }
+    else if(input$channel1 == "WEU"){
+      if(input$ind == "household"){
+        WEUHousehold
+      }
+      else if(input$ind == "foodservice"){
+        WEUfs
+      }
+      else if(input$ind == "retail"){
+        WEURetail
+      }
+    }
+  })
   
 } #server end
 
