@@ -1,0 +1,1 @@
+This is a folder to store all the R Codes programmed to develop this shiny apps as well to publish it online
