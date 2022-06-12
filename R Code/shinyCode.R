@@ -41,6 +41,7 @@ Country <- stageData$country
 df <- data.frame(Country, Stage, Loss)
 
 cyl_data <- select(stageData, year, country, loss_percentage, commodity, food_supply_stage, activity)
+cyl_data[cyl_data == ""] <- NA
 cyl_data[is.na(cyl_data)] <- "General"
 
 ANZHousehold <- select(filter(HouseholdData,Region == "Australia and New Zealand"),Country,Estimate)
