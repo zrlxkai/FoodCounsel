@@ -26,10 +26,11 @@ library(shinydashboard) #for bubble graph
 library(bubbles) #for bubble graph
 
 #import data
-setwd("C:/Users/User/OneDrive/Documents/FoodCounsel")
+setwd("D:/Group Project/") #change to your local file
 getwd()
 stageData <- read.csv("Data.csv")
 HouseholdData <- read.csv("Household.csv")
+view(HouseholdData)
 FSData <- read.csv("Food Service.csv")
 RetailData <- read.csv("Retail.csv")
 
@@ -96,6 +97,15 @@ SSARetail <- select(filter(RetailData,Region == "Sub-Saharan Africa"),Country,Es
 WASRetail <- select(filter(RetailData,Region == "Western Asia"),Country,Estimate)
 WEURetail <- select(filter(RetailData,Region == "Western Europe"),Country,Estimate)
 
+#for map tab, importing data and initialisation
+foodwastemap <- read.csv("food_waste_map.csv")
+view(foodwastemap)
+mapdata <- map_data("world")
+mapdata <- left_join(mapdata, foodwastemap, by = "region")
+mapdata1 <- mapdata %>% 
+  filter(!is.na(Household_tonnes)) %>%
+  filter(!is.na(Retail_tonnes)) %>%
+  filter(!is.na(Food_service_tonnes))
 
 # Define UI for application
 ui <- fluidPage(
@@ -234,10 +244,10 @@ ui <- fluidPage(
                                        "Western Europe"="WEU")),
                h6(),
                radioButtons("ind",
-                           "Choose the Industry:",
-                           c("Household"="household",
-                             "Food Service"="foodservice",
-                             "Retail"="retail"))
+                            "Choose the Industry:",
+                            c("Household"="household",
+                              "Food Service"="foodservice",
+                              "Retail"="retail"))
                
              ),
              fluidRow(
@@ -251,7 +261,32 @@ ui <- fluidPage(
                )
              )
     ), #tab 2 
-    tabPanel("tab 3", h1("isi dlm ni code korang")), #tab 3
+    
+    tabPanel("Food waste world map", 
+             h1("Food waste world map"),
+             fluidRow(
+               sidebarPanel(radioButtons("category1",
+                          "Choose category:",
+                          c("Household" = "household",
+                            "Food service" = "foodservice",
+                            "Retail" = "retail")),
+                          radioButtons("category2",
+                          "",
+                          c("kg/capita/year" = "capita",
+                            "1000 tonnes/year" = "tonnes"))
+                          ),
+               box(width = 8, status = "info", solidHeader = TRUE,
+               title = "Food Waste by Countries and Categories",
+               imageOutput("map", width = "100%")
+               )
+             ),
+             fluidRow(
+               sidebarPanel(
+                 tableOutput("mapdataset")
+               )
+             )
+             
+             ) #tab 3
     
   ) #Navbar Page end
 ) #fluid Page end
@@ -801,6 +836,114 @@ server <- function(input, output) {
       }
     }
   })
+  
+  #server for map tab
+  output$map <- renderPlot(
+    if(input$category1 == "household" & input$category2 == "capita"){
+      map1 <- ggplot(mapdata1, aes( x = long, y = lat, group = group)) + 
+        geom_polygon(aes(fill = Household_capita), color = "black")
+      
+      map2 <- map1 + scale_fill_gradient(name = "Household Waste\nkg/capita/year", low = "yellow", high = "red", na.value = "grey50", ) +
+        theme(axis.text.x = element_blank(),
+              axis.text.y = element_blank(),
+              axis.ticks = element_blank(),
+              axis.title.y = element_blank(),
+              axis.title.x = element_blank(),
+              rect = element_blank())
+      
+      map2
+    }
+    else if(input$category1 == "household" & input$category2 == "tonnes"){
+      map1 <- ggplot(mapdata1, aes( x = long, y = lat, group = group)) + 
+        geom_polygon(aes(fill = Household_tonnes), color = "black")
+      
+      map2 <- map1 + scale_fill_gradient(name = "Household Waste\n1000 tonnes/year", low = "yellow", high = "red", na.value = "grey50", ) +
+        theme(axis.text.x = element_blank(),
+              axis.text.y = element_blank(),
+              axis.ticks = element_blank(),
+              axis.title.y = element_blank(),
+              axis.title.x = element_blank(),
+              rect = element_blank())
+      
+      map2
+    }
+    else if(input$category1 == "foodservice" & input$category2 == "capita"){
+      map1 <- ggplot(mapdata1, aes( x = long, y = lat, group = group)) + 
+        geom_polygon(aes(fill = Food_service_capita), color = "black")
+      
+      map2 <- map1 + scale_fill_gradient(name = "Food Service Waste\nkg/capita/year", low = "yellow", high = "red", na.value = "grey50", ) +
+        theme(axis.text.x = element_blank(),
+              axis.text.y = element_blank(),
+              axis.ticks = element_blank(),
+              axis.title.y = element_blank(),
+              axis.title.x = element_blank(),
+              rect = element_blank())
+      
+      map2
+    }
+    else if(input$category1 == "foodservice" & input$category2 == "tonnes"){
+      map1 <- ggplot(mapdata1, aes( x = long, y = lat, group = group)) + 
+        geom_polygon(aes(fill = Food_service_tonnes), color = "black")
+      
+      map2 <- map1 + scale_fill_gradient(name = "Food Service Waste\n1000 tonnes/year", low = "yellow", high = "red", na.value = "grey50", ) +
+        theme(axis.text.x = element_blank(),
+              axis.text.y = element_blank(),
+              axis.ticks = element_blank(),
+              axis.title.y = element_blank(),
+              axis.title.x = element_blank(),
+              rect = element_blank())
+      
+      map2
+    }
+    else if(input$category1 == "retail" & input$category2 == "capita"){
+      map1 <- ggplot(mapdata1, aes( x = long, y = lat, group = group)) + 
+        geom_polygon(aes(fill = Retail_capita), color = "black")
+      
+      map2 <- map1 + scale_fill_gradient(name = "Retail Waste\nkg/capita/year", low = "yellow", high = "red", na.value = "grey50", ) +
+        theme(axis.text.x = element_blank(),
+              axis.text.y = element_blank(),
+              axis.ticks = element_blank(),
+              axis.title.y = element_blank(),
+              axis.title.x = element_blank(),
+              rect = element_blank())
+      
+      map2
+    }
+    else{
+      map1 <- ggplot(mapdata1, aes( x = long, y = lat, group = group)) + 
+        geom_polygon(aes(fill = Retail_tonnes), color = "black")
+      
+      map2 <- map1 + scale_fill_gradient(name = "Retail Waste\nx1000 tonnes/year", low = "yellow", high = "red", na.value = "grey50", ) +
+        theme(axis.text.x = element_blank(),
+              axis.text.y = element_blank(),
+              axis.ticks = element_blank(),
+              axis.title.y = element_blank(),
+              axis.title.x = element_blank(),
+              rect = element_blank())
+      
+      map2
+    }
+  )
+  output$mapdataset <- renderTable(
+    if(input$category1 == "household" & input$category2 == "capita"){
+      select(foodwastemap, region, Household_capita)
+    }
+    else if(input$category1 == "household" & input$category2 == "tonnes"){
+      select(foodwastemap, region, Household_tonnes)
+    }
+    else if(input$category1 == "foodservice" & input$category2 == "capita"){
+      select(foodwastemap, region, Food_service_capita)
+    }
+    else if(input$category1 == "foodservice" & input$category2 == "tonnes"){
+      select(foodwastemap, region, Food_service_tonnes)
+    }
+    else if(input$category1 == "retail" & input$category2 == "capita"){
+      select(foodwastemap, region, Retail_capita)
+    }
+    else{
+      select(foodwastemap, region, Retail_tonnes)
+    }
+  )
   
 } #server end
 
