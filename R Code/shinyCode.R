@@ -12,6 +12,7 @@
 #install.packages("devtools") #install this to use library(bubbles)
 #devtools::install_github("jcheng5/bubbles") #install this to use library(bubbles)
 #install.packages("plotly")
+#install.packages("shinythemes")
 
 library(shiny)
 library(ggplot2)
@@ -20,30 +21,35 @@ library(dplyr)
 library(plotly)
 library(rsconnect)
 library(shinydashboardPlus)
+library(shinythemes)
+library(bslib)
 library(tidyr)
 library(tidyverse) #for bubble graph
 library(shinydashboard) #for bubble graph
 library(bubbles) #for bubble graph
 
 #import data
-setwd("D:/Group Project/") #change to your local file
+setwd("C:/Users/User/OneDrive/Documents/FoodCounsel") #change to your local file
 getwd()
 stageData <- read.csv("Data.csv")
 HouseholdData <- read.csv("Household.csv")
-view(HouseholdData)
 FSData <- read.csv("Food Service.csv")
 RetailData <- read.csv("Retail.csv")
+foodwastemap <- read.csv("food_waste_map.csv")
 
 #initialize data
+#data used for stage tab
 Loss <- stageData$loss_percentage
 Stage <- stageData$food_supply_stage
 Country <- stageData$country
 df <- data.frame(Country, Stage, Loss)
 
+#data used for percentage tab
 cyl_data <- select(stageData, year, country, loss_percentage, commodity, food_supply_stage, activity)
 cyl_data[cyl_data == ""] <- NA
 cyl_data[is.na(cyl_data)] <- "General"
 
+#data used for region tab
 ANZHousehold <- select(filter(HouseholdData,Region == "Australia and New Zealand"),Country,Estimate)
 CASHousehold <- select(filter(HouseholdData,Region == "Central Asia"),Country,Estimate)
 EASHousehold <- select(filter(HouseholdData,Region == "Eastern Asia"),Country,Estimate)
@@ -61,7 +67,6 @@ SEUHousehold <- select(filter(HouseholdData,Region == "Southern Europe"),Country
 SSAHousehold <- select(filter(HouseholdData,Region == "Sub-Saharan Africa"),Country,Estimate)
 WASHousehold <- select(filter(HouseholdData,Region == "Western Asia"),Country,Estimate)
 WEUHousehold <- select(filter(HouseholdData,Region == "Western Europe"),Country,Estimate)
-
 ANZfs <- select(filter(FSData,Region == "Australia and New Zealand"),Country,Estimate)
 CASfs <- select(filter(FSData,Region == "Central Asia"),Country,Estimate)
 EASfs <- select(filter(FSData,Region == "Eastern Asia"),Country,Estimate)
@@ -79,7 +84,6 @@ SEUfs <- select(filter(FSData,Region == "Southern Europe"),Country,Estimate)
 SSAfs <- select(filter(FSData,Region == "Sub-Saharan Africa"),Country,Estimate)
 WASfs <- select(filter(FSData,Region == "Western Asia"),Country,Estimate)
 WEUfs <- select(filter(FSData,Region == "Western Europe"),Country,Estimate)
-
 ANZRetail <- select(filter(RetailData,Region == "Australia and New Zealand"),Country,Estimate)
 CASRetail <- select(filter(RetailData,Region == "Central Asia"),Country,Estimate)
 EASRetail <- select(filter(RetailData,Region == "Eastern Asia"),Country,Estimate)
@@ -98,9 +102,7 @@ SSARetail <- select(filter(RetailData,Region == "Sub-Saharan Africa"),Country,Es
 WASRetail <- select(filter(RetailData,Region == "Western Asia"),Country,Estimate)
 WEURetail <- select(filter(RetailData,Region == "Western Europe"),Country,Estimate)
 
-#for map tab, importing data and initialisation
-foodwastemap <- read.csv("food_waste_map.csv")
-view(foodwastemap)
+#data used for map tab
 mapdata <- map_data("world")
 mapdata <- left_join(mapdata, foodwastemap, by = "region")
 mapdata1 <- mapdata %>% 
@@ -108,12 +110,39 @@ mapdata1 <- mapdata %>%
   filter(!is.na(Retail_tonnes)) %>%
   filter(!is.na(Food_service_tonnes))
 
+
 # Define UI for application
 ui <- fluidPage(
+  theme = shinytheme("cerulean"),
+  shinythemes::themeSelector(),
+  tags$head(
+    tags$style(HTML("
+                      @import url('https://fonts.googleapis.com/css2?family=Yusei+Magic&display=swap');
+                      /* Change font of header text */
+                      p {
+                          color: black;
+                          font-family: sans-serif;
+                          font-size: 130%;
+                        }
+                      ul {
+                          color: black;
+                          font-family: sans-serif;
+                          font-size: 130%;
+                        }
+                      /* Make text visible on inputs */
+                      .shiny-input-container {
+                        color: #474747;
+                      }"))
+  ),
+  
   navbarPage( 
     "Food Counsel", #app title
     
+    #HomePage
     tabPanel("Home", 
+             HTML('<center><img src="https://www.foreverknowledge.info/uploads/tx_pspblog/banners/prevebt-food-waste-blog-banner.jpg", height = 200, width = 1000></center>'),
+             br(),
+             br(),
              sidebarPanel(
                h2("FOOD COUNSEL"),
                p("Food Counsel is an application that can provide its users with food waste-related information and data"),
@@ -184,7 +213,9 @@ ui <- fluidPage(
                 
               ) #main panel end
               
-    ),#tab 1
+    ),
+    
+    #Loss Percentage tab
     tabPanel( "Loss Percentage",
               h2("Total Food Loss Percentage Over the Years"),
               br(),
@@ -220,9 +251,13 @@ ui <- fluidPage(
               
     ), 
     
-    
+    #By Region tab
     tabPanel("By Region",
              h2("Statistics of Estimated Food Waste (tones/year) by Region and Industry"),
+             br(),
+             p("This tab will display a bubble chart and the dataset of the total food waste in tones/year based
+               on the input from user which includes region and industry"),
+             br(),
              fluidRow(
                #choose the type of dataset
                selectInput(inputId = "channel1", label = "Choose Region",
@@ -253,32 +288,35 @@ ui <- fluidPage(
              ),
              fluidRow(
                sidebarPanel(
-                 tableOutput("datasetss")
+                 tableOutput("datasetss"), width = 2
                ),
-               box(
-                 width = 8, status = "info", solidHeader = TRUE,
-                 title = "Food Waste by Countries and Industries",
-                 bubblesOutput("bubbleRegion", width = "100%", height = 600)
+               mainPanel(
+                 box(
+                   width = 8, status = "info", solidHeader = TRUE,
+                   title = "Food Waste by Countries and Industries",
+                   bubblesOutput("bubbleRegion", width = "100%", height = 600)
+                 )
                )
              )
-    ), #tab 2 
+    ), 
     
+    #map tab
     tabPanel("Food waste world map", 
              h1("Food waste world map"),
              fluidRow(
                sidebarPanel(radioButtons("category1",
-                          "Choose category:",
-                          c("Household" = "household",
-                            "Food service" = "foodservice",
-                            "Retail" = "retail")),
-                          radioButtons("category2",
-                          "",
-                          c("kg/capita/year" = "capita",
-                            "1000 tonnes/year" = "tonnes"))
-                          ),
+                                         "Choose category:",
+                                         c("Household" = "household",
+                                           "Food service" = "foodservice",
+                                           "Retail" = "retail")),
+                            radioButtons("category2",
+                                         "",
+                                         c("kg/capita/year" = "capita",
+                                           "1000 tonnes/year" = "tonnes"))
+               ),
                box(width = 8, status = "info", solidHeader = TRUE,
-               title = "Food Waste by Countries and Categories",
-               imageOutput("map", width = "100%")
+                   title = "Food Waste by Countries and Categories",
+                   imageOutput("map", width = "100%")
                )
              ),
              fluidRow(
@@ -287,7 +325,21 @@ ui <- fluidPage(
                )
              )
              
-             ) #tab 3
+    ),
+    
+    #About us Panel
+    tabPanel("About Us",
+             h1("Group Members", align = "center"),
+             HTML('<center><img src="https://raw.githubusercontent.com/zrlxkai/FoodCounsel/main/R%20Code/PURPLE%20MINIMALIST%20ABOUT%20US%20INSTAGRAM%20POST.png?token=GHSAT0AAAAAABVH5WIXPDKWSHCQNTAQCN5CYVGFRBQ", width = 75%></center>'),
+             
+             
+    ),
+    
+    #footer
+    footer = dashboardFooter(
+      left = "By Makan Makan",
+      right = "Malaysia, 2021"
+    )
     
   ) #Navbar Page end
 ) #fluid Page end
@@ -326,7 +378,8 @@ server <- function(input, output) {
         theme(axis.text.x = element_blank())
     } #else end
     
-  }) #outputplot end
+  }) #server for stage tab end
+  
   
   #server for loss percentage tab
   #Table for loss percentage
@@ -353,7 +406,8 @@ server <- function(input, output) {
       labs(title <- "Food Loss Percentage Over the Years")
     
     scatterPlot <- ggplotly(scatterPlot)
-  }) #end scatterplot loss percentage
+    
+  }) #server for loss percentage tab end
   
   
   #server for region tab
@@ -836,7 +890,8 @@ server <- function(input, output) {
         WEURetail
       }
     }
-  })
+  }) #server for region tab end
+  
   
   #server for map tab
   output$map <- renderPlot(
@@ -944,7 +999,7 @@ server <- function(input, output) {
     else{
       select(foodwastemap, region, Retail_tonnes)
     }
-  )
+  ) #server for map tab end
   
 } #server end
 
