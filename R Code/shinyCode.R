@@ -29,7 +29,7 @@ library(shinydashboard) #for bubble graph
 library(bubbles) #for bubble graph
 
 #import data
-setwd("C:/Users/End User/Documents/Degree/sem 4/data science") #change to your local file
+setwd("C:/Users/User/OneDrive/Documents/FoodCounsel") #change to your local file
 getwd()
 stageData <- read.csv("Stage.csv")
 HouseholdData <- read.csv("Household.csv")
@@ -148,6 +148,21 @@ ui <- fluidPage(
                p("Food Counsel is an application that can provide its users with food waste-related information and data"),
                br(),
                br(),
+               p("This website consists of 4 main tabs including: "),
+               h3("Food Waste World Map"),
+               p("This tab visualise us the amount of food waste from all countries in the world by source categories (Household, Food Service, Retail). The food waste are visualised in term of annual food waste and food waste per capita"),
+               br(),
+               h3("Loss Percentage"),
+               p("This tab will show the total food loss percentage globally that occurs in various activities that may arise in the food supply chain stage over a range of years."),
+               br(),
+               h3("By Region"),
+               p("This tab will display a bubble chart and the dataset of the total food waste in tones/year based on the input from user which includes region and industry "),
+               br(),
+               h3("Stage"),
+               p("This tab will show the break down of dataset to identify at which stage does food waste occur the most."),
+               br(),
+               
+               
              ),
              mainPanel(
                h1("Hello fellow Malaysian"),
@@ -330,7 +345,7 @@ ui <- fluidPage(
     #About us Panel
     tabPanel("About Us",
              h1("Group Members", align = "center"),
-             HTML('<center><img src="https://raw.githubusercontent.com/zrlxkai/FoodCounsel/main/R%20Code/PURPLE%20MINIMALIST%20ABOUT%20US%20INSTAGRAM%20POST.png?token=GHSAT0AAAAAABVH5WIXPDKWSHCQNTAQCN5CYVGFRBQ", width = 75%></center>'),
+             HTML('<center><img src="https://scontent-sin6-3.xx.fbcdn.net/v/t39.30808-6/287686175_5189400484478801_6261460154473537345_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=730e14&_nc_eui2=AeFmu7tnisy6YIiQ6pcGCr5QHyH2iO5b8gQfIfaI7lvyBLLtmibQUZm4n6HfOcymsf_Aif2mzjENl_hjzZAnGjZW&_nc_ohc=wB8qhqUd5a0AX8PNLKt&_nc_ht=scontent-sin6-3.xx&oh=00_AT-tofDwCuIeFwz8fjx-ZPQ8fu2HcchJ9UbCe76LgM4DYg&oe=62AB0E72", width = 75%></center>'),
              
              
     ),
