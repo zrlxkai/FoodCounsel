@@ -29,9 +29,9 @@ library(shinydashboard) #for bubble graph
 library(bubbles) #for bubble graph
 
 #import data
-setwd("C:/Users/User/OneDrive/Documents/FoodCounsel") #change to your local file
+setwd("C:/Users/End User/Documents/Degree/sem 4/data science") #change to your local file
 getwd()
-stageData <- read.csv("Data.csv")
+stageData <- read.csv("Stage.csv")
 HouseholdData <- read.csv("Household.csv")
 FSData <- read.csv("Food Service.csv")
 RetailData <- read.csv("Retail.csv")
@@ -182,37 +182,31 @@ ui <- fluidPage(
              
     ),
     
-    #stage tab
-    tabPanel( "Stage",
-              h2("Stage of Food Waste"),
-              br(),
-              p("This tab will show the break down of dataset to identify at which stage does food waste occur the most."),
-              br(),
-              
-              sidebarPanel(          
-                h3("Tick for categorized figure"),
-                
-                #checkbox
-                checkboxInput("cbCategorized", "Categorized", FALSE),
-                
-                h3("Dataset Table"),
-                br(),
-                
-                #display table
-                fluidRow(column(12, dataTableOutput("table"), align = "center")),
-                
-              ), #sidebar panel end
-              
-              mainPanel( 
-                
-                h2("Figure of percentage of food waste (%) sorted by stages of food waste for all country"),
-                br(),
-                
-                #display graph
-                plotOutput("plot")
-                
-              ) #main panel end
-              
+    #map tab
+    tabPanel("Food waste world map", 
+             h1("Food waste world map"),
+             fluidRow(
+               sidebarPanel(radioButtons("category1",
+                                         "Choose category:",
+                                         c("Household" = "household",
+                                           "Food service" = "foodservice",
+                                           "Retail" = "retail")),
+                            radioButtons("category2",
+                                         "",
+                                         c("kg/capita/year" = "capita",
+                                           "1000 tonnes/year" = "tonnes"))
+               ),
+               box(width = 8, status = "info", solidHeader = TRUE,
+                   title = "Food Waste by Countries and Categories",
+                   imageOutput("map", width = "100%")
+               )
+             ),
+             fluidRow(
+               sidebarPanel(
+                 tableOutput("mapdataset")
+               )
+             )
+             
     ),
     
     #Loss Percentage tab
@@ -300,31 +294,37 @@ ui <- fluidPage(
              )
     ), 
     
-    #map tab
-    tabPanel("Food waste world map", 
-             h1("Food waste world map"),
-             fluidRow(
-               sidebarPanel(radioButtons("category1",
-                                         "Choose category:",
-                                         c("Household" = "household",
-                                           "Food service" = "foodservice",
-                                           "Retail" = "retail")),
-                            radioButtons("category2",
-                                         "",
-                                         c("kg/capita/year" = "capita",
-                                           "1000 tonnes/year" = "tonnes"))
-               ),
-               box(width = 8, status = "info", solidHeader = TRUE,
-                   title = "Food Waste by Countries and Categories",
-                   imageOutput("map", width = "100%")
-               )
-             ),
-             fluidRow(
-               sidebarPanel(
-                 tableOutput("mapdataset")
-               )
-             )
-             
+    #stage tab
+    tabPanel( "Stage",
+              h2("Stage of Food Waste"),
+              br(),
+              p("This tab will show the break down of dataset to identify at which stage does food waste occur the most."),
+              br(),
+              
+              sidebarPanel(          
+                h3("Tick for categorized figure"),
+                
+                #checkbox
+                checkboxInput("cbCategorized", "Categorized", FALSE),
+                
+                h3("Dataset Table"),
+                br(),
+                
+                #display table
+                fluidRow(column(12, dataTableOutput("table"), align = "center")),
+                
+              ), #sidebar panel end
+              
+              mainPanel( 
+                
+                h2("Figure of percentage of food waste (%) sorted by stages of food waste for all country"),
+                br(),
+                
+                #display graph
+                plotOutput("plot")
+                
+              ) #main panel end
+              
     ),
     
     #About us Panel
@@ -363,7 +363,8 @@ server <- function(input, output) {
         ylab("Food Waste Percentage (%)") +
         scale_fill_gradient("Average", low="darkolivegreen1",high="deepskyblue3") +
         theme_bw(base_size = 15) +
-        theme(axis.text.x = element_blank())
+        theme(axis.text.x = element_blank(),
+              axis.title.x=element_blank())
       
     } #if end
     #check box didnt ticked
@@ -375,7 +376,8 @@ server <- function(input, output) {
         ylab("Food Waste Percentage (%)") +
         scale_fill_gradient("Average", low="darkolivegreen1",high="deepskyblue3") +
         theme_bw(base_size = 15) +
-        theme(axis.text.x = element_blank())
+        theme(axis.text.x = element_blank(),
+              axis.title.x=element_blank())
     } #else end
     
   }) #server for stage tab end
