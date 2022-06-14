@@ -145,53 +145,66 @@ ui <- fluidPage(
              br(),
              sidebarPanel(
                h2("FOOD COUNSEL"),
-               p("Food Counsel is an application that can provide its users with food waste-related information and data"),
+               p("Food Counsel is an application that visualizes the graphical representation of food waste-related information and data."),
                br(),
                br(),
                p("This website consists of 4 main tabs including: "),
                h3("Food Waste World Map"),
-               p("This tab visualise us the amount of food waste from all countries in the world by source categories (Household, Food Service, Retail). The food waste are visualised in term of annual food waste and food waste per capita"),
+               p("This tab visualizes the amount of food waste from all countries in the world by source categories (Household, Food Service, Retail). 
+                 The food waste is visualised in terms of annual food waste and food waste per capita."),
                br(),
                h3("Loss Percentage"),
-               p("This tab will show the total food loss percentage globally that occurs in various activities that may arise in the food supply chain stage over a range of years."),
+               p("This tab will show the total food loss percentage globally that occurs in various activities that may arise in the food supply chain 
+                 stage over a range of years."),
                br(),
                h3("By Region"),
-               p("This tab will display a bubble chart and the dataset of the total food waste in tones/year based on the input from user which includes region and industry "),
+               p("This tab will display a bubble chart and the dataset of the total food waste in tones/year based on the input from the user which 
+                 includes region and industry "),
                br(),
                h3("Stage"),
-               p("This tab will show the break down of dataset to identify at which stage does food waste occur the most."),
+               p("This tab will show the breakdown of the dataset to identify at which stage does food waste occur the most."),
                br(),
                
                
              ),
              mainPanel(
-               h1("Hello fellow Malaysian"),
-               p("The fact that substantial amounts of food are produced but not eaten by humans has substantial negative impacts: 
-                 environmentally, socially and economically. Estimates suggest that 8-10% of global greenhouse gas emissions are 
-                 associated with food that is not consumed."),
+               h1("Hello there"),
+               p("Food loss and waste refer to food that is either spilled, spoiled, lost, poor in quality or even food that got thrown away despite still 
+                 in a good condition. It could occur at any stage in the food supply chain including production, post-harvest, processing, distribution, 
+                 retail, and consumption stage."),
+               p("The fact that substantial amounts of food are produced but not eaten by humans has substantial negative impacts: environmentally, 
+                 socially and economically. Estimates suggest that 8-10% of global greenhouse gas emissions are associated with food that is not consumed."),
+               br(),
+               p("This issue is directly linked to Sustainable Development Goal 12: Ensure sustainable consumption and production patterns."),
+               p("- Target 12.3: halve global per capita food waste: This target focuses on reducing the food loss along production and supply chains, including post-harvest losses and halving per 
+                 capita global food waste at the retail and consumer levels by 2033."),
                br(),
                br(),
                strong(h3("How do we come to Food Waste Data Visualization Project?")),
                strong(h4("Problem statement")),
-               p("The food wastage in the world has been found to be on the rise. Because there hasn't been much research done to analyze this issue."),
+               p("Food wastage has become a huge issue due to the concerning amount of its increasing rate each year. 
+                 Therefore, it's important to analyse this issue."),
                br(),
                br(),
                strong(h4("Solution")),
-               p("Food Wastage is a complex issue and has been a serious problem in Malaysia. As a result, we created this project that has informations on statistic of food wastage and we did it to spread awareness of it"),
+               p("Food Wastage is a complex issue and has been a serious problem globally. Hence, this project will help to 
+                 visualize the data regarding food wastage to raise awareness regarding the gravity it holds."),
                br(),
-               strong(h3("The Questions?")),
-               p("- How much food has been wasted in household, food service and retail category?"),
-               p("- What is the trends of change of food waste from 2000 to 2021?"),
-               p("- What are the stages of food wastage to happen?"),
-               p("- At which stage is the food waste occur the most?"),
+               strong(h3("Questions")),
+               p("- What is the estimated value of food waste caused by households, food services, and retails?"),
+               p("- What are the trends of the change in the food loss percentage from the year 2000 until 2021?"),
+               p("- What is the total food wastage caused by households, food services, and retails in a region or country?"),
+               p("- At which stage does the food waste occur the most?"),
                br(),
-               strong(h3("Objective")),
-               p("- To identify patterns of food waste' trends from 2000 to 2021 in the world"),
-               p("- To show the graph illustration of food waste by stages"),
-               p("- To display the estimation of food waste according to household, food service and retail category"),
+               strong(h3("Objectives")),
+               p("- To identify patterns of food waste trends from 2000 to 2021 globally."),
+               p("- To visualize the data of food waste according to the food chain stages."),
+               p("- To display the estimation of food waste according to household, food service and retail categories."),
+               p("- To display the total amount of food waste in a region and country."),
                br(),
-               strong(h3("Datasets Used")),
-               p("We use datasets from the official website of UN Environment Programme and from the website of Food and Agriculture Organization of the United States"),
+               strong(h3("Datasets Sources")),
+               p("We use datasets from the official website of the United Nations Environment Programme and the website of 
+                 the Food and Agriculture Organization of the United Nations."),
                verbatimTextOutput("txtout"),
              ) # mainPanel
              
