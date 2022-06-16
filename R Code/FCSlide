@@ -1,0 +1,72 @@
+---
+title       : FoodCounsel
+subtitle    : Food Waste Visualizer
+author      : Group 12
+job         : Azrul, Faiz, Iffah, Ikhwan
+logo        : logo.jpeg
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : []            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+## Problem Statement
+
+The food wastage in the world has been found to be on the rise. Because there hasn't been much research done to analyze this issue.
+
+## Questions
+
+- How much food has been wasted in household, food service and retail category?
+- What is the trends of change of food waste from 2000 to 2021?
+- What are the stages of food wastage to happen?
+- At which stage is the food waste occur the most?
+
+---
+
+## Solution
+
+Food Wastage is a complex issue and has been a serious problem in Malaysia. As a result, we created this project that has information on statistic of food wastage and we did it to spread awareness of it.
+
+## Objective
+
+- To identify patterns of food waste' trends from 2000 to 2021 in the world
+- To show the graph illustration of food waste by stages
+- To display the estimation of food waste according to household, food service and retail category
+
+---
+
+## Features that we have acquired from the dataset
+- Estimated Food Waste by Countries and Categories.
+- Estimated Food Waste over the Years, 2010-2015.		
+- Estimated Food Waste by Region and Industries.		
+- Estimated Food Waste by the Stage for all Countries.		
+
+Codeine Shiny Application is available here:
+
+The dataset we used in this project is available at:
+[https://www.unep.org/resources/report/unep-food-waste-index-report-2021](https://www.unep.org/resources/report/unep-food-waste-index-report-2021)
+
+Source code for this application is available on Github:
+[https://github.com/zrlxkai/FoodCounsel](https://github.com/zrlxkai/FoodCounsel)
+
+---
+
+## Snapshot of RShiny Application
+
+```{r, echo = FALSE, out.width='100%', fig.align='center', fig.cap='...'}
+knitr::include_graphics('FC.png', error = FALSE)
+```
+
+---
+
+## Key Takeways
+
+1.
+
+2.
+
+3.
+
+4.
