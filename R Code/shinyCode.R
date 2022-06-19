@@ -358,7 +358,7 @@ ui <- fluidPage(
     #About us Panel
     tabPanel("About Us",
              h1("Group Members", align = "center"),
-             HTML('<center><img src="https://scontent-sin6-3.xx.fbcdn.net/v/t39.30808-6/287686175_5189400484478801_6261460154473537345_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=730e14&_nc_eui2=AeFmu7tnisy6YIiQ6pcGCr5QHyH2iO5b8gQfIfaI7lvyBLLtmibQUZm4n6HfOcymsf_Aif2mzjENl_hjzZAnGjZW&_nc_ohc=wB8qhqUd5a0AX8PNLKt&_nc_ht=scontent-sin6-3.xx&oh=00_AT-tofDwCuIeFwz8fjx-ZPQ8fu2HcchJ9UbCe76LgM4DYg&oe=62AB0E72", width = 75%></center>'),
+             HTML('<center><img src="https://scontent-kut2-2.xx.fbcdn.net/v/t39.30808-6/287686175_5189400484478801_6261460154473537345_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=730e14&_nc_eui2=AeFmu7tnisy6YIiQ6pcGCr5QHyH2iO5b8gQfIfaI7lvyBLLtmibQUZm4n6HfOcymsf_Aif2mzjENl_hjzZAnGjZW&_nc_ohc=OB_ydnd9dR4AX9L164s&_nc_ht=scontent-kut2-2.xx&oh=00_AT9WZfUuFviUtnCNDKvIv2sqlusXvRrqvRY3H9ta9IiXLw&oe=62B2F772", width = 75%></center>'),
              
              
     ),
