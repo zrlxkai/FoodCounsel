@@ -29,8 +29,8 @@ library(shinydashboard) #for bubble graph
 library(bubbles) #for bubble graph
 
 #import data
-setwd("C:/Users/User/OneDrive/Documents/FoodCounsel") #change to your local file
-getwd()
+#setwd("C:/Users/User/OneDrive/Documents/FoodCounsel") #change to your local file
+#getwd()
 stageData <- read.csv("Stage.csv")
 HouseholdData <- read.csv("Household.csv")
 FSData <- read.csv("Food Service.csv")
@@ -363,11 +363,11 @@ ui <- fluidPage(
              
     ),
     
-    #footer
-    footer = dashboardFooter(
-      left = "By Makan Makan",
-      right = "Malaysia, 2021"
-    )
+    # #footer
+    # footer = dashboardFooter(
+    #   left = "By Makan Makan",
+    #   right = "Malaysia, 2021"
+    # )
     
   ) #Navbar Page end
 ) #fluid Page end
