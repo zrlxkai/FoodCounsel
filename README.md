@@ -34,7 +34,7 @@ This website is created by us to show people
 - To see the slide presentation just click the link:
 [Rpres](https://rpubs.com/assalik/Codeine)
 - To see the Codeine RShiny app just click the link:
-[CodeineApp](https://assalik.shinyapps.io/Codeine/)
+[Food Counsel App](https://azrulhaikal.shinyapps.io/Food_Counsel/)
 
 ### Resources
  - United Nations Environment Programme. (2021, March 4). UNEP Food Waste Index Report 2021. UNEP - UN Environment Programme. https://www.unep.org/resources/report/unep-food-waste-index-report-2021
