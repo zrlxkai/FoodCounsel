@@ -28,7 +28,6 @@ This website is created by us to show people
 * Household.csv
 * Retail.csv
 * Stage.csv
-* food_waste_map.csv
 
 ## Rpubs
 - To see the slide presentation just click the link:
