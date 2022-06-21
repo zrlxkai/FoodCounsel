@@ -1,15 +1,16 @@
 ---
 title       : FoodCounsel
 subtitle    : Food Waste Visualizer
-author      : Group 12
+author      : Group 12 (Makan Makan)
 job         : Azrul, Faiz, Iffah, Ikhwan
 logo        : logo.jpeg
 framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
 highlighter : highlight.js  # {highlight.js, prettify, highlight}
 hitheme     : tomorrow      # 
-widgets     : []            # {mathjax, quiz, bootstrap}
-mode        : selfcontained # {standalone, draft}
-knit        : slidify::knit2slides
+mode        : standalone # {standalone, draft}
+output:
+  slidy_presentation: default
+  ioslides_presentation: default
 ---
 
 ## Problem Statement
@@ -38,12 +39,12 @@ Food Wastage is a complex issue and has been a serious problem in Malaysia. As a
 ---
 
 ## Features that we have acquired from the dataset
-- Estimated Food Waste by Countries and Categories.
 - Estimated Food Waste over the Years, 2010-2015.		
 - Estimated Food Waste by Region and Industries.		
 - Estimated Food Waste by the Stage for all Countries.		
 
 Codeine Shiny Application is available here:
+[https://azrulhaikal.shinyapps.io/Food_Counsel/](https://azrulhaikal.shinyapps.io/Food_Counsel/)
 
 The dataset we used in this project is available at:
 [https://www.unep.org/resources/report/unep-food-waste-index-report-2021](https://www.unep.org/resources/report/unep-food-waste-index-report-2021)
@@ -55,8 +56,8 @@ Source code for this application is available on Github:
 
 ## Snapshot of RShiny Application
 
-```{r, echo = FALSE, out.width='100%', fig.align='center', fig.cap='...'}
-knitr::include_graphics('FC.png', error = FALSE)
+```{r, echo = FALSE, out.width='75%', fig.align='center', fig.cap='...'}
+knitr::include_graphics('FC1.jpeg', error = FALSE)
 ```
 
 ---
