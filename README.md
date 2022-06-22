@@ -31,7 +31,7 @@ This website is created by us to show people
 
 ## Rpubs
 - To see the slide presentation just click the link:
-[Rpres](https://rpubs.com/assalik/Codeine)
+[RPubs Slides](https://rpubs.com/assalik/Codeine](https://rpubs.com/RafidIkhwan/FC))
 - To see the Codeine RShiny app just click the link:
 [Food Counsel App](https://azrulhaikal.shinyapps.io/Food_Counsel/)
 
