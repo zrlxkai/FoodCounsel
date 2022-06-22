@@ -13,35 +13,34 @@ output:
   ioslides_presentation: default
 ---
 
-## Problem Statement
+### Problem Statement
 
-The food wastage in the world has been found to be on the rise. Because there hasn't been much research done to analyze this issue.
+Food wastage has become a huge issue due to the concerning amount of its increasing rate each year.Therefore, it's important to analyse this issue.
 
-## Questions
+### Questions
 
-- How much food has been wasted in household, food service and retail category?
-- What is the trends of change of food waste from 2000 to 2021?
-- What are the stages of food wastage to happen?
-- At which stage is the food waste occur the most?
-
----
-
-## Solution
-
-Food Wastage is a complex issue and has been a serious problem in Malaysia. As a result, we created this project that has information on statistic of food wastage and we did it to spread awareness of it.
-
-## Objective
-
-- To identify patterns of food waste' trends from 2000 to 2021 in the world
-- To show the graph illustration of food waste by stages
-- To display the estimation of food waste according to household, food service and retail category
+- What are the trends of the change in the food loss percentage from the year 2000 until 2021?
+- What is the total food wastage caused by households, food services, and retails in a region or country?
+- At which stage does the food waste occur the most?
 
 ---
 
-## Features that we have acquired from the dataset
-- Estimated Food Waste over the Years, 2010-2015.		
+### Solution
+
+Food Wastage is a complex issue and has been a serious problem globally. Hence, this project will help to visualize the data regarding food wastage to raise awareness regarding the gravity it holds.
+
+### Objective
+
+- To identify patterns of food waste trends from 2000 to 2021 globally.
+- To visualize the data of food waste according to the food chain stages.
+- To display the estimation of food waste according to household, food service and retail categories.
+
+---
+
+### Features that we have acquired from the dataset
+- Estimated Food Waste over the Years, 2000-2021.		
 - Estimated Food Waste by Region and Industries.		
-- Estimated Food Waste by the Stage for all Countries.		
+- Estimated Food Waste by the Stage for all Countries.
 
 Codeine Shiny Application is available here:
 [https://azrulhaikal.shinyapps.io/Food_Counsel/](https://azrulhaikal.shinyapps.io/Food_Counsel/)
