@@ -5,7 +5,7 @@ This would be our groups' assignment for Introduction to Data Science. Our group
 
 ## Description
 
-Food Wastage is a complex issue and has been a serious problem globally. This website is created by us to o visualize the data regarding food wastage to raise awareness regarding the gravity it holds.
+Food Wastage is a complex issue and has been a serious problem globally. This website is created by us to visualize the data regarding food wastage to raise awareness regarding the gravity it holds.
 
 ### Dependency
 * library(shiny)
